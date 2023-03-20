@@ -10,12 +10,15 @@ namespace adt
     {
     private:
         size_t _size;
+        int capacity;
         type *arr;
+        initializer_list<type> *init_list;
 
     public:
         explicit stack();
         explicit stack(const stack<type> &input);
         explicit stack(const size_t &size);
+        stack(const std::initializer_list<type> &init_list);
         ~stack();
 
         // modifiers
@@ -32,14 +35,16 @@ namespace adt
 };
 
 #pragma region constructors
-T adt::stack<type>::stack() : _size(0), arr(new type[_size])
+T adt::stack<type>::stack() : _size(0), capacity(1), arr(new type[capacity])
 {
 }
-T adt::stack<type>::stack(const size_t &size) : arr(new type[size]), _size(size){};
 
-T adt::stack<type>::stack(const adt::stack<type> &input)
+T adt::stack<type>::stack(const size_t &size) : _size(size), capacity(size * 2) ss, arr(new type[capacity]) {}
+
+T adt::stack<type>::stack(const adt::stack<type> &input) : this(input) {}
+
+T adt::stack<type>::stack(const std::initializer_list<type> &init_list) : init_list(&init_list)
 {
-    this->vec_stack = input.vec_stack;
 }
 
 T adt::stack<type>::~stack()
@@ -52,16 +57,26 @@ T adt::stack<type>::~stack()
 //----modifiers
 T constexpr void adt::stack<type>::push(const type &input)
 {
-    this->_size++;
-    type *new_arr = new type[this->_size];
+    if (this->_size == this->capacity)
+    {
 
+        capacity = capacity * 2;
+        type *new_alloc = new type[capacity];
+        for (int x = 0; x < this->_size; x++)
+        {
+            new_alloc[x] = this->arr[x];
+        }
+        delete[] this->arr;
+        this->arr = new_alloc;
+    }
+    this->_size++;
+    int &temp = this->arr[0];
     for (int x = 1; x < this->_size; x++)
     {
-        new_arr[x] = this->arr[x - 1];
+        this->arr[x] = temp;
+        temp = this->arr[x];
     }
-    new_arr[0] = input;
-    delete[] this->arr;
-    this->arr = new_arr;
+    this->arr[0] = input;
 }
 
 T inline constexpr type &adt::stack<type>::top()
@@ -71,18 +86,8 @@ T inline constexpr type &adt::stack<type>::top()
 
 T constexpr void adt::stack<type>::pop()
 {
-    size_t old_size = this->_size; // modify this later, we want to avoid copy assignment for the effective perfomance
+    this->arr[0].~type();
     this->_size--;
-    type *new_arr = new type[this->_size];
-    type popped_value = this->arr[0]; // modify this also this is essentially a copyy assignment
-    for (int x = 1; x < old_size; x++)
-    {
-        new_arr[x - 1] = this->arr[x];
-    }
-    delete[] this->arr;
-
-    this->arr = new_arr;
-    return popped_value;
 }
 
 T constexpr bool adt::stack<type>::find(const type &input)
