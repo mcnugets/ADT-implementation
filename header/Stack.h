@@ -10,13 +10,28 @@ namespace adt
 
     T class stack
     {
+
+        class iterator
+        {
+        private:
+            type *ptr;
+
+        public:
+            iterator(type *ptr);
+            ~iterator();
+            type &operator++();
+            type &operator--();
+            bool &operator==(type &other);
+            bool &operator!=(type &other);
+        };
+
     private:
         // member variables
         size_t _size;
         size_t _capacity;
         type *arr;
 
-        // typedef initialization for initializer list
+        // typedefs
         typedef std::initializer_list<type> in_list;
 
     public:
@@ -45,12 +60,23 @@ namespace adt
         // operators
         int &operator[](const size_t i);
         type &operator=(type &assign_to);
+
+        // iterators
+        iterator &begin();
+        iterator &end();
     };
 };
+
 #endif stack_header
 
+// aliases
+// T using _stack = typename adt::stack<type>;
+T using iter = typename adt::stack<type>::iterator;
+//
+
 #pragma region constructors
-T adt::stack<type>::stack() : _size(0), _capacity(1)
+T adt::stack<type>::stack() : _size(0),
+                              _capacity(1)
 {
     arr = new type[_capacity];
 }
@@ -71,7 +97,8 @@ T adt::stack<type>::stack(const adt::stack<type> &input) : _size(input._size), _
 }
 
 // init list constructor
-T adt::stack<type>::stack(const in_list &init_list) : _size(init_list.size()), _capacity(_size * 2)
+T adt::stack<type>::stack(const in_list &init_list) : _size(init_list.size()),
+                                                      _capacity(_size * 2)
 {
 
     this->arr = new type[this->_capacity];
@@ -175,4 +202,38 @@ T type &adt::stack<type>::operator=(type &assign_to)
         this->arr = assign_to.arr;
     }
     return *this;
+}
+// there is typedef, uisng, and there is #define
+// stack iterator
+
+T typename adt::stack<type>::iterator &adt::stack<type>::begin()
+{
+    return iterator(this->arr);
+}
+T typename adt::stack<type>::iterator &adt::stack<type>::end()
+{
+    return iterator(this->arr) + this->_size;
+}
+
+//---------ITERATOR IMPLEMENTAITON-----------
+
+T adt::stack<type>::iterator::iterator(type *ptr) : ptr(ptr) {}
+
+T type &adt::stack<type>::iterator::operator++()
+{
+    ptr++;
+    return *ptr;
+}
+T type &adt::stack<type>::iterator::operator--()
+{
+    ptr--;
+    return *ptr;
+}
+T bool &adt::stack<type>::iterator::operator==(type &other)
+{
+    return *this->ptr == other;
+}
+T bool &adt::stack<type>::iterator::operator!=(type &other)
+{
+    return *this->ptr != other;
 }
