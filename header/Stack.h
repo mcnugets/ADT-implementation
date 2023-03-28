@@ -1,7 +1,5 @@
 #define T template <typename type>
-#define conc const noexcept
 #include <iostream>
-
 #ifndef stack_header
 #define stack_header
 
@@ -11,20 +9,6 @@ namespace adt
     T class stack
     {
 
-        class iterator
-        {
-        private:
-            type *ptr;
-
-        public:
-            iterator(type *ptr);
-            ~iterator();
-            type &operator++();
-            type &operator--();
-            bool &operator==(type &other);
-            bool &operator!=(type &other);
-        };
-
     private:
         // member variables
         size_t _size;
@@ -32,62 +16,86 @@ namespace adt
         type *arr;
 
         // typedefs
-        typedef std::initializer_list<type> in_list;
 
     public:
+        class iterator
+        {
+        private:
+            type *ptr;
+
+        public:
+            ///
+            /// Iterator constructor
+            iterator();
+            iterator(type *ptr);
+            ~iterator();
+            iterator &operator++(int);
+            iterator &operator+(const int value);
+            iterator &operator-(const int value);
+            iterator &operator--();
+            bool &operator==(type &other);
+            bool &operator!=(type &other);
+            type &operator*() const;
+        };
+
         // constructors
         explicit stack();
         explicit stack(const stack<type> &input);
         explicit stack(const size_t &size);
-        stack(const in_list &init_list);
+        stack(const std::initializer_list<type> &init_list);
         ~stack();
 
         /// write-only cannot be used withc const
         // modifiers
         constexpr void push(const type &input);
         constexpr void pop();
+        constexpr void assign(iterator &begin, iterator *end, const type &input);
 
         /// read-only can be const
         // access
-        constexpr type &top() conc;
-        constexpr bool find(const type &input) conc;
+        constexpr type &top() const noexcept;
+        constexpr bool find(const type &input) const noexcept;
 
         // capacity
-        constexpr size_t size() conc;
-        constexpr size_t capacity() conc;
-        constexpr bool empty() conc;
+        constexpr size_t size() const noexcept;
+        constexpr size_t capacity() const noexcept;
+        constexpr bool empty() const noexcept;
 
         // operators
         int &operator[](const size_t i);
         type &operator=(type &assign_to);
 
         // iterators
-        iterator &begin();
-        iterator &end();
+        const iterator begin() const;
+        const iterator end() const;
+
+        friend std::ostream &operator<<(std::ostream &os, const iterator &it)
+        {
+            os << it;
+            return os;
+        }
     };
 };
 
-#endif stack_header
+#endif
 
-// aliases
-// T using _stack = typename adt::stack<type>;
-T using iter = typename adt::stack<type>::iterator;
-//
+using namespace adt;
+using namespace std;
 
 #pragma region constructors
-T adt::stack<type>::stack() : _size(0),
-                              _capacity(1)
+T stack<type>::stack() : _size(0),
+                         _capacity(1)
 {
     arr = new type[_capacity];
 }
 
 // constructor that defines the size of the stack
-T adt::stack<type>::stack(const size_t &size) : _size(size), _capacity(size * 2)
+T stack<type>::stack(const size_t &size) : _size(size), _capacity(size * 2)
 {
     arr = new type[_capacity];
 }
 // copy constructor
-T adt::stack<type>::stack(const adt::stack<type> &input) : _size(input._size), _capacity(input._capacity)
+T stack<type>::stack(const stack<type> &input) : _size(input._size), _capacity(input._capacity)
 {
     this->arr = new type[this->_capacity];
     for (int i = 0; i < this->_size; i++)
@@ -97,8 +105,8 @@ T adt::stack<type>::stack(const adt::stack<type> &input) : _size(input._size), _
 }
 
 // init list constructor
-T adt::stack<type>::stack(const in_list &init_list) : _size(init_list.size()),
-                                                      _capacity(_size * 2)
+T stack<type>::stack(const initializer_list<type> &init_list) : _size(init_list.size()),
+                                                                _capacity(_size * 2)
 {
 
     this->arr = new type[this->_capacity];
@@ -108,7 +116,7 @@ T adt::stack<type>::stack(const in_list &init_list) : _size(init_list.size()),
     }
 }
 
-T adt::stack<type>::~stack()
+T stack<type>::~stack()
 {
     delete[] this->arr;
 }
@@ -116,7 +124,7 @@ T adt::stack<type>::~stack()
 #pragma endregion
 
 //----modifiers
-T constexpr void adt::stack<type>::push(const type &input)
+T constexpr void stack<type>::push(const type &input)
 {
     if (this->_size == this->_capacity)
     {
@@ -139,19 +147,19 @@ T constexpr void adt::stack<type>::push(const type &input)
     }
     this->arr[0] = input;
 }
-T constexpr void adt::stack<type>::pop()
+T constexpr void stack<type>::pop()
 {
     this->arr[0].~type();
     this->_size--;
 }
 
 // access
-T inline constexpr type &adt::stack<type>::top() conc
+T inline constexpr type &stack<type>::top() const noexcept
 {
     return this->arr[0];
 }
 
-T constexpr bool adt::stack<type>::find(const type &input) conc
+T constexpr bool stack<type>::find(const type &input) const noexcept
 {
     for (int x = 0; x < this->_size; x++)
     {
@@ -162,15 +170,15 @@ T constexpr bool adt::stack<type>::find(const type &input) conc
 }
 
 // capacity
-T constexpr size_t adt::stack<type>::size() conc
+T constexpr size_t stack<type>::size() const noexcept
 {
     return this->_size;
 }
-T constexpr size_t adt::stack<type>::capacity() conc
+T constexpr size_t stack<type>::capacity() const noexcept
 {
     return this->_capacity;
 }
-T constexpr bool adt::stack<type>::empty() conc
+T constexpr bool stack<type>::empty() const noexcept
 {
     if (this._size == 0)
     {
@@ -180,12 +188,12 @@ T constexpr bool adt::stack<type>::empty() conc
 }
 
 // operator
-T int &adt::stack<type>::operator[](const std::size_t i)
+T int &stack<type>::operator[](const std::size_t i)
 {
     return this->arr[i];
 }
 
-T type &adt::stack<type>::operator=(type &assign_to)
+T type &stack<type>::operator=(type &assign_to)
 {
     if (this == &assign_to)
         return *this;
@@ -206,34 +214,54 @@ T type &adt::stack<type>::operator=(type &assign_to)
 // there is typedef, uisng, and there is #define
 // stack iterator
 
-T typename adt::stack<type>::iterator &adt::stack<type>::begin()
+T const typename stack<type>::iterator stack<type>::begin() const
 {
     return iterator(this->arr);
 }
-T typename adt::stack<type>::iterator &adt::stack<type>::end()
+T const typename stack<type>::iterator stack<type>::end() const
 {
     return iterator(this->arr) + this->_size;
 }
 
 //---------ITERATOR IMPLEMENTAITON-----------
+T stack<type>::iterator::iterator() {}
 
-T adt::stack<type>::iterator::iterator(type *ptr) : ptr(ptr) {}
+T stack<type>::iterator::iterator(type *ptr) : ptr(ptr) {}
 
-T type &adt::stack<type>::iterator::operator++()
+T stack<type>::iterator::~iterator() {}
+
+T typename stack<type>::iterator &stack<type>::iterator::operator++(int)
 {
     ptr++;
-    return *ptr;
+    return *this;
 }
-T type &adt::stack<type>::iterator::operator--()
+T typename stack<type>::iterator &stack<type>::iterator::operator+(const int value)
+{
+    ptr = ptr + value;
+    return *this;
+}
+T typename stack<type>::iterator &stack<type>::iterator::operator-(const int value)
+{
+    ptr = ptr - value;
+    return *this;
+}
+T typename stack<type>::iterator &stack<type>::iterator::operator--()
 {
     ptr--;
-    return *ptr;
+    return *this;
 }
-T bool &adt::stack<type>::iterator::operator==(type &other)
+
+T bool &stack<type>::iterator::operator==(type &other)
 {
     return *this->ptr == other;
 }
-T bool &adt::stack<type>::iterator::operator!=(type &other)
+
+T bool &stack<type>::iterator::operator!=(type &other)
 {
     return *this->ptr != other;
+}
+
+T type &stack<type>::iterator::operator*() const
+{
+    return *this->ptr;
 }

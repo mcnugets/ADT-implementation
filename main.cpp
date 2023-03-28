@@ -6,16 +6,13 @@ using namespace adt;
 
 int main()
 {
-    stack<int> st = {1, 2, 3};
+    typedef stack<int> stack;
+    stack st = {1, 2, 3};
+    vector<int> vec = {1, 2, 3};
+    stack::iterator it = st.begin();
+    it = it + 2;
 
-    stack<int> st2(st);
-
-    int cunt = st2.top();
-    st2.pop();
-    size_t soup = st.size();
-
-    soup = 4;
-    cout << st.size() << endl;
+    cout << *it << endl;
 
     return 0;
 }
