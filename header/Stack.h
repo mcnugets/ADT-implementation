@@ -44,7 +44,7 @@ namespace adt
         constexpr bool empty() const noexcept;
 
         // operators
-        int &operator[](const size_t i);
+        type &operator[](const size_t i);
         type &operator=(type &assign_to);
 
         // iterators
@@ -177,7 +177,7 @@ T constexpr bool stack<type>::empty() const noexcept
 }
 
 // operator
-T int &stack<type>::operator[](const std::size_t i)
+T type &stack<type>::operator[](const std::size_t i)
 {
     return this->arr[i];
 }
@@ -189,8 +189,8 @@ T type &stack<type>::operator=(type &assign_to)
     if (this->_size != assign_to._size)
     {
         delete[] this->arr;
-        this->_size = 0;
-        this->arr = new type[assign_to._size];
+        this->_capacity = assign_to._capacity;
+        this->arr = new type[this->_capacity];
         this->arr = assign_to.arr;
         this->_size = assign_to._size;
     }
