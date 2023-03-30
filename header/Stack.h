@@ -1,5 +1,6 @@
-#define T template <typename type>
 #include <iostream>
+#include "Iterator.h"
+#define T template <typename type>
 #ifndef stack_header
 #define stack_header
 
@@ -15,31 +16,12 @@ namespace adt
         size_t _capacity;
         type *arr;
 
-        // typedefs
-
     public:
-        class iterator
-        {
-        private:
-            type *ptr;
-
-        public:
-            ///
-            /// Iterator constructor
-            iterator();
-            iterator(type *ptr);
-            ~iterator();
-            iterator &operator++(int);
-            iterator &operator+(const int value);
-            iterator &operator-(const int value);
-            iterator &operator--();
-            bool &operator==(type &other);
-            bool &operator!=(type &other);
-            type &operator*() const;
-        };
-
+        // typedefs
+        typedef iterator<type> iter;
         // constructors
         explicit stack();
+
         explicit stack(const stack<type> &input);
         explicit stack(const size_t &size);
         stack(const std::initializer_list<type> &init_list);
@@ -48,8 +30,8 @@ namespace adt
         /// write-only cannot be used withc const
         // modifiers
         constexpr void push(const type &input);
-        constexpr void pop();
-        constexpr void assign(iterator &begin, iterator *end, const type &input);
+        constexpr void pop() noexcept;
+        constexpr void assign(iter &begin, iter *end, const type &input);
 
         /// read-only can be const
         // access
@@ -66,10 +48,10 @@ namespace adt
         type &operator=(type &assign_to);
 
         // iterators
-        const iterator begin() const;
-        const iterator end() const;
+        const iter begin() const;
+        const iter end() const;
 
-        friend std::ostream &operator<<(std::ostream &os, const iterator &it)
+        friend std::ostream &operator<<(std::ostream &os, const iter &it)
         {
             os << it;
             return os;
@@ -110,9 +92,12 @@ T stack<type>::stack(const initializer_list<type> &init_list) : _size(init_list.
 {
 
     this->arr = new type[this->_capacity];
+    typename initializer_list<type>::iterator it = init_list.begin();
     for (int i = 0; i < this->_size; i++)
     {
-        this->arr[i] = *init_list.begin() + i;
+
+        this->arr[i] = *it;
+        it++;
     }
 }
 
@@ -138,18 +123,22 @@ T constexpr void stack<type>::push(const type &input)
         delete[] this->arr;
         this->arr = new_alloc;
     }
-    this->_size++;
-    int &temp = this->arr[0];
-    for (int x = 1; x < this->_size; x++)
+
+    for (int x = this->_size; x >= 0; x--)
     {
-        this->arr[x] = temp;
-        temp = this->arr[x];
+        this->arr[x] = this->arr[x - 1];
     }
     this->arr[0] = input;
+    this->_size++;
 }
-T constexpr void stack<type>::pop()
+T constexpr void stack<type>::pop() noexcept
 {
-    this->arr[0].~type();
+    arr[_size] = arr[0];
+    for (int x = 1; x < _size; x++)
+    {
+        arr[x - 1] = arr[x];
+    }
+    arr[0].~type();
     this->_size--;
 }
 
@@ -214,54 +203,11 @@ T type &stack<type>::operator=(type &assign_to)
 // there is typedef, uisng, and there is #define
 // stack iterator
 
-T const typename stack<type>::iterator stack<type>::begin() const
+T const typename stack<type>::iter stack<type>::begin() const
 {
-    return iterator(this->arr);
+    return iter(this->arr);
 }
-T const typename stack<type>::iterator stack<type>::end() const
+T const typename stack<type>::iter stack<type>::end() const
 {
-    return iterator(this->arr) + this->_size;
-}
-
-//---------ITERATOR IMPLEMENTAITON-----------
-T stack<type>::iterator::iterator() {}
-
-T stack<type>::iterator::iterator(type *ptr) : ptr(ptr) {}
-
-T stack<type>::iterator::~iterator() {}
-
-T typename stack<type>::iterator &stack<type>::iterator::operator++(int)
-{
-    ptr++;
-    return *this;
-}
-T typename stack<type>::iterator &stack<type>::iterator::operator+(const int value)
-{
-    ptr = ptr + value;
-    return *this;
-}
-T typename stack<type>::iterator &stack<type>::iterator::operator-(const int value)
-{
-    ptr = ptr - value;
-    return *this;
-}
-T typename stack<type>::iterator &stack<type>::iterator::operator--()
-{
-    ptr--;
-    return *this;
-}
-
-T bool &stack<type>::iterator::operator==(type &other)
-{
-    return *this->ptr == other;
-}
-
-T bool &stack<type>::iterator::operator!=(type &other)
-{
-    return *this->ptr != other;
-}
-
-T type &stack<type>::iterator::operator*() const
-{
-    return *this->ptr;
+    return iter(this->arr) + (this->_size - 1);
 }

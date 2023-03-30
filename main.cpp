@@ -1,18 +1,19 @@
 #include <iostream>
 #include "header/Stack.h"
 #include <vector>
-using namespace std;
-using namespace adt;
 
 int main()
 {
-    typedef stack<int> stack;
-    stack st = {1, 2, 3};
+    typedef adt::stack<int> stack;
+    stack st = {3, 2, 1};
     vector<int> vec = {1, 2, 3};
-    stack::iterator it = st.begin();
-    it = it + 2;
-
-    cout << *it << endl;
+    adt::iterator<int> it = st.begin();
+    st.push(5);
+    st.push(6);
+    st.pop();
+    st.pop();
+    std::cout << *st.begin() << std::endl;
+    std::cout << *st.end() << std::endl;
 
     return 0;
 }
