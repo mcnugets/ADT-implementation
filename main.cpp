@@ -16,5 +16,10 @@ int main()
     std::cout << *st.begin() << std::endl;
     std::cout << *st.end() << std::endl;
 
+    typedef adt::queue<int> queue;
+
+    queue q = {2, 4, 6};
+    cout << *q.begin() << endl;
+
     return 0;
 }

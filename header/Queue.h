@@ -39,11 +39,9 @@ namespace adt
         // iterators
         constexpr iter begin() const;
         constexpr iter end() const;
-        friend std::ostream &operator<<(std::ostream &os, const iter &it)
-        {
-            os << it;
-            return os;
-        }
+
+        template <typename U>
+        friend std::ostream &operator<<(std::ostream &os, const iter &it);
     };
 };
 using namespace std;
@@ -66,7 +64,7 @@ T queue<type>::queue(const initializer_list<type> &init_list) noexcept : _size(i
                                                                          _capacity(_size),
                                                                          arr(new type[_capacity])
 {
-    initializer_list<type> it = init_list.begin();
+    typename initializer_list<type>::iterator it = init_list.begin();
     for (int x = 0; x < this->_size; x++)
     {
         this->arr[x] = *it;
@@ -162,13 +160,18 @@ T constexpr type &queue<type>::operator=(type &other)
 
     return *this;
 }
+T ostream &operator<<(ostream &os, typename queue<type>::iter &it)
+{
+    os << it;
+    return os;
+}
 
 // iterator implementation
 T constexpr typename queue<type>::iter queue<type>::begin() const
 {
-    return iter(arr[0]);
+    return iter(arr);
 }
 T constexpr typename queue<type>::iter queue<type>::end() const
 {
-    return iter(arr[_size - 1]);
+    return iter(arr) + _size - 1;
 }
