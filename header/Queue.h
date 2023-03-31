@@ -1,5 +1,8 @@
+#ifndef queue_h
+#define queue_h
 #include <iostream>
-#define T template <typename type>
+#include "template.h"
+#include "Iterator.h"
 
 namespace adt
 {
@@ -44,6 +47,7 @@ namespace adt
         friend std::ostream &operator<<(std::ostream &os, const iter &it);
     };
 };
+
 using namespace std;
 using namespace adt;
 // constructor implementation
@@ -175,3 +179,5 @@ T constexpr typename queue<type>::iter queue<type>::end() const
 {
     return iter(arr) + _size - 1;
 }
+
+#endif

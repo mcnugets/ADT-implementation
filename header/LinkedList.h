@@ -1,6 +1,8 @@
+#ifndef linkedlist_h
+#define linkedlist_h
 #include <iostream>
-#include <Iterator.h>
-#define T template <typename t>
+#include "template.h"
+#include "Iterator.h"
 
 namespace adt
 {
@@ -9,10 +11,10 @@ namespace adt
     private:
         struct node
         {
-            t *value;
+            type *value;
             node *next;
             node();
-            node(t &value, node &next) : value(&value), next(&next)
+            node(type &value, node &next) : value(&value), next(&next)
             {
             }
             ~node() {}
@@ -23,17 +25,25 @@ namespace adt
         // constructors
         linkedlist();
         ~linkedlist();
-        linkedlist(t &value);
-        linkedlist(linkedlist<t> &other);
-        linkedlist(iterator<t> &begin, iterator<t> &end, t &value);
+        linkedlist(node &node);
+        linkedlist(linkedlist<type> &other);
+        linkedlist(iterator<type> &begin, iterator<type> &end, type &value);
         // modifiers
         void insert(node &input);
         void delete_(node &input);
         void travel();
         node &search(node &value);
-        void sort(iterator<t> &begin, iterator<t> &end);
-        void merge(linkedlist<t> &other);
-        void reverse(iterator<t> &begin, iterator<t> &end);
-        void concatenate(linkedlist<t> &other);
+        void sort(iterator<type> &begin, iterator<type> &end);
+        void merge(linkedlist<type> &other);
+        void reverse(iterator<type> &begin, iterator<type> &end);
+        void concatenate(linkedlist<type> &other);
+        // operators
     };
 }
+
+// Linked list implementation
+T adt::linkedlist<type>::linkedlist() {}
+T adt::linkedlist<type>::linkedlist(node &node) : head(node) {}
+T adt::linkedlist<type>::linkedlist(adt::linkedlist<type> &other) : head(&other.head) {}
+
+#endif

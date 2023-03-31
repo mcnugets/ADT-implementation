@@ -1,5 +1,7 @@
+#ifndef iterator_h
+#define iterator_h
+#include "template.h"
 #include <iostream>
-#define T template <typename type>
 
 namespace adt
 {
@@ -67,3 +69,4 @@ T type &adt::iterator<type>::operator*() const
 {
     return *this->ptr;
 }
+#endif

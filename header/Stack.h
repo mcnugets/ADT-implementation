@@ -1,8 +1,8 @@
-#include <iostream>
-#include "Iterator.h"
-#define T template <typename type>
 #ifndef stack_header
 #define stack_header
+#include <iostream>
+#include "template.h"
+#include "Iterator.h"
 
 namespace adt
 {
@@ -58,8 +58,6 @@ namespace adt
         }
     };
 };
-
-#endif
 
 using namespace adt;
 using namespace std;
@@ -211,3 +209,5 @@ T const typename stack<type>::iter stack<type>::end() const
 {
     return iter(this->arr) + (this->_size - 1);
 }
+
+#endif

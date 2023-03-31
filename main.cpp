@@ -1,13 +1,14 @@
 #include <iostream>
 #include "header/Stack.h"
 #include "header/Queue.h"
+#include "header/LinkedList.h"
 #include <vector>
 
 int main()
 {
     typedef adt::stack<int> stack;
     stack st = {3, 2, 1};
-    vector<int> vec = {1, 2, 3};
+    std::vector<int> vec = {1, 2, 3};
     adt::iterator<int> it = st.begin();
     st.push(5);
     st.push(6);
