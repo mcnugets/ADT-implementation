@@ -26,5 +26,12 @@ int main()
     linkedlist<int>::node node2(3, node1);
     linkedlist<int> thelist(node2);
     cout << *thelist.begin() << endl;
+
+    vector<int> vec = {1, 2, 3, 4};
+    vector<int>::iterator it = vec.begin();
+    *vec.begin() = 26;
+    it++;
+
+    cout << vec[0] << endl;
     return 0;
 }

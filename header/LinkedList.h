@@ -36,10 +36,10 @@ namespace adt
 
         // constructors
         explicit linkedlist();
-        explicit ~linkedlist();
+        ~linkedlist();
         explicit linkedlist(const node &node);
         explicit linkedlist(const linkedlist<type> &other);
-        explicit linkedlist(linkediterator &begin, linkediterator &end, node &value);
+        explicit linkedlist(linkediterator &begin, linkediterator &end, type &value);
         // modifiers
         void insert(node &input);
         void delete_(node &input);
@@ -71,13 +71,14 @@ T using linkediterator = typename linkedlist<type>::linkediterator;
 T linkedlist<type>::linkedlist() : head(nullptr) {}
 T linkedlist<type>::linkedlist(const node &node) : head(&node) {}
 T linkedlist<type>::linkedlist(const adt::linkedlist<type> &other) : head(&other.head) {}
-T linkedlist<type>::linkedlist(linkediterator &begin, linkediterator &end, node &input)
+T linkedlist<type>::linkedlist(linkediterator &begin, linkediterator &end, type &input)
 {
-    // iterator<type> it = begin;
-    // while (it != end)
-    // {
-    //     it = begin()
-    // }
+    linkediterator it = begin;
+    while (it != end)
+    {
+        *it = input;
+        it++;
+    }
 }
 T linkedlist<type>::~linkedlist() {}
 // operator imeplementation
