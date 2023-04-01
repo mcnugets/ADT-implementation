@@ -37,6 +37,7 @@ T adt::iterator<type>::~iterator() {}
 T adt::iterator<type> &adt::iterator<type>::operator++(int)
 {
     ptr++;
+    // ptr = ptr->next
     return *this;
 }
 T adt::iterator<type> &adt::iterator<type>::operator+(const int value)
@@ -67,6 +68,7 @@ T bool &adt::iterator<type>::operator!=(type &other)
 
 T type &adt::iterator<type>::operator*() const
 {
+    // return *this->ptr->val
     return *this->ptr;
 }
 #endif
