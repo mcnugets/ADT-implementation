@@ -22,23 +22,11 @@ struct node
 
 int main()
 {
-    // linkedlist<int>::node n(2);
-    // linkedlist<int>::node n2(5, n);
-    // linkedlist<int> ll(n2);
+    linkedlist<int>::node n(2);
+    linkedlist<int>::node n2(5, n);
+    linkedlist<int> ll(n2);
 
-    // cout << ll.end() << endl;
+    cout << *ll.end() << endl;
 
-    node n(2);
-    node n2(5, n);
-
-    node *current = &n2;
-    while (current->next != nullptr)
-    {
-        *current = *current->next;
-    }
-    node new_node(99);
-    n.next = &new_node;
-    current->next = &new_node;
-    cout << *n.next->value << endl;
     return 0;
 }
