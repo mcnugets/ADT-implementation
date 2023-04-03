@@ -12,21 +12,34 @@ namespace adt
     public:
         struct node
         {
+        private:
             type *value;
             node *next;
+
+        public:
             node() : value(nullptr), next(nullptr) {}
             node(const type &val) : value(new type(val)), next(nullptr) {}
-            node(const type &val, const node &next_) : value(new type(val)), next(new node(next_)) {}
+
+            node(const type &val, node *next_) : value(new type(val)), next(next_) {}
             ~node()
             {
-                delete next;
-                delete value;
+                // delete value;
+                // if (next != nullptr)
+                //     delete next;
             }
             friend std::ostream &operator<<(std::ostream &os, const node &node_)
             {
                 os << *node_.value;
                 return os;
             }
+            type &value_() const
+            {
+                return *value;
+            };
+            node &next_() const
+            {
+                return *next;
+            };
         };
 
         class linkediterator
@@ -46,7 +59,7 @@ namespace adt
         // constructors
         explicit linkedlist();
         ~linkedlist();
-        explicit linkedlist(const node &node_);
+        explicit linkedlist(node *head_);
         explicit linkedlist(const linkedlist<type> &other);
         explicit linkedlist(linkediterator &begin, linkediterator &end, type &value);
 
@@ -59,6 +72,9 @@ namespace adt
         void merge(linkedlist<type> &other);
         void reverse(linkediterator &begin, linkediterator &end);
         void concatenate(linkedlist<type> &other);
+
+        // access
+        node &head_() const;
 
         // operators
         // iterator
@@ -80,7 +96,7 @@ T using linkediterator = typename linkedlist<type>::linkediterator;
 
 // Linked list implementation
 T linkedlist<type>::linkedlist() : head(nullptr) {}
-T linkedlist<type>::linkedlist(const node &node_) : head(new node(node_)) {} // node(2, node(5,node(2)))
+T linkedlist<type>::linkedlist(node *head_) : head(head_) {} // this shit causes infinite memory allcation since its recursion
 T linkedlist<type>::linkedlist(const adt::linkedlist<type> &other) : head(&other.head) {}
 T linkedlist<type>::linkedlist(linkediterator &begin, linkediterator &end, type &input)
 {
@@ -93,7 +109,14 @@ T linkedlist<type>::linkedlist(linkediterator &begin, linkediterator &end, type 
 }
 T linkedlist<type>::~linkedlist()
 {
-    delete this->head;
+    // node *current = head;
+    // while (current != nullptr)
+    // {
+    //     node *temp = current;
+    //     delete temp->value;
+    //     delete temp;
+    //     current = current->next;
+    // }
 }
 
 T void linkedlist<type>::insert(const node &node_)
@@ -109,7 +132,6 @@ T void linkedlist<type>::insert(const node &node_)
 
 // iterator implementation
 T typename linkedlist<type>::linkediterator linkedlist<type>::begin()
-
 {
 
     return linkediterator(head);
@@ -124,11 +146,20 @@ T typename linkedlist<type>::linkediterator linkedlist<type>::end()
 
     return linkediterator(current);
 }
+T typename linkedlist<type>::node &linkedlist<type>::head_() const
+{
+    return *head;
+}
 
 // list iterator implementation
-T linkedlist<type>::linkediterator::linkediterator() {}
+T linkedlist<type>::linkediterator::linkediterator()
+{
+}
 T linkedlist<type>::linkediterator::linkediterator(node *head_) : ptr(head_) {}
-T linkedlist<type>::linkediterator::~linkediterator() {}
+T linkedlist<type>::linkediterator::~linkediterator()
+{
+    delete this->ptr;
+}
 
 T typename linkedlist<type>::linkediterator &linkedlist<type>::linkediterator::operator++(int)
 {

@@ -4,29 +4,16 @@
 #include "header/LinkedList.h"
 #include <vector>
 
-struct node
-{
-    int *value;
-    node *next;
-    node() : value(0), next(nullptr) {}
-    node(const int &value) : value(new int(value)), next(nullptr) {}
-    node(const int &value, const node &node_) : value(new int(value)), next(new node(node_)) {}
-    ~node() {}
-    node &operator=(const node &input)
-    {
-        value = input.value;
-        next = input.next;
-        return *this;
-    }
-};
-
 int main()
 {
-    linkedlist<int>::node n(2);
-    linkedlist<int>::node n2(5, n);
-    linkedlist<int> ll(n2);
+    // c2::c1 kk(22);
+    // c2 kk_parent(&kk);
+    // cout << *kk_parent.ptr2->ptr << endl;
+    linkedlist<int>::node n(23);
+    linkedlist<int>::node n2(222, &n);
 
-    cout << *ll.end() << endl;
+    linkedlist<int> ll(&n2);
+    cout << ll.head_() << endl;
 
     return 0;
 }
