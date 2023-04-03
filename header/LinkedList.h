@@ -12,11 +12,11 @@ namespace adt
     public:
         struct node
         {
-            const type *value;
-            const node *next;
-            node() : value(0), next(nullptr) {}
+            type *value;
+            node *next;
+            node() : value(nullptr), next(nullptr) {}
             node(const type &val) : value(&val), next(nullptr) {}
-            node(const type &value, const node &next) : value(&value), next(&next) {}
+            node(const type &value, node &next) : value(&value), next(&next) {}
             ~node() {}
         };
 
@@ -37,12 +37,12 @@ namespace adt
         // constructors
         explicit linkedlist();
         ~linkedlist();
-        explicit linkedlist(const node &node);
+        explicit linkedlist(node &node);
         explicit linkedlist(const linkedlist<type> &other);
         explicit linkedlist(linkediterator &begin, linkediterator &end, type &value);
         // modifiers
-        void insert(node &input);
-        void delete_(node &input);
+        void insert(const node &input);
+        void delete_(const node &input);
         void travel();
         node &search(node &value);
         void sort(linkediterator &begin, linkediterator &end);
@@ -60,7 +60,7 @@ namespace adt
         }
 
     private:
-        const node *head;
+        node *head;
     };
 }
 // typedefs
@@ -69,7 +69,7 @@ T using linkediterator = typename linkedlist<type>::linkediterator;
 
 // Linked list implementation
 T linkedlist<type>::linkedlist() : head(nullptr) {}
-T linkedlist<type>::linkedlist(const node &node) : head(&node) {}
+T linkedlist<type>::linkedlist(node &node) : head(&node) {}
 T linkedlist<type>::linkedlist(const adt::linkedlist<type> &other) : head(&other.head) {}
 T linkedlist<type>::linkedlist(linkediterator &begin, linkediterator &end, type &input)
 {
@@ -80,7 +80,21 @@ T linkedlist<type>::linkedlist(linkediterator &begin, linkediterator &end, type 
         it++;
     }
 }
-T linkedlist<type>::~linkedlist() {}
+T linkedlist<type>::~linkedlist()
+{
+    delete this->value;
+    delete this->head;
+}
+
+T void linkedlist<type>::insert(const node &node_)
+{
+    node *current = head;
+    while (current->next != nullptr)
+    {
+        current = head->next;
+    }
+    current->next = &node_;
+}
 // operator imeplementation
 
 // iterator implementation
