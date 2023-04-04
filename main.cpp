@@ -11,8 +11,16 @@ int main()
     // cout << *kk_parent.ptr2->ptr << endl;
     linkedlist<int>::node n(23);
     linkedlist<int>::node n2(222, &n);
+    linkedlist<int>::node n3(999);
 
     linkedlist<int> ll(&n2);
+
+    ll.insert(n3);
+
+    while (ll.head_().next_() != nullptr)
+    {
+        ll.head_() = *ll.head_().next_();
+    }
     cout << ll.head_() << endl;
 
     return 0;
