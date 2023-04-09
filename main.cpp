@@ -9,19 +9,17 @@ int main()
     // c2::c1 kk(22);
     // c2 kk_parent(&kk);
     // cout << *kk_parent.ptr2->ptr << endl;
-    linkedlist<int>::node n(23);
-    linkedlist<int>::node n2(222, &n);
-    linkedlist<int>::node n3(999);
 
+    linkedlist<int>::node n3(999);
+    linkedlist<int>::node n(23, &n3);
+    linkedlist<int>::node n2(222, &n); // 222 23 999
     linkedlist<int> ll(&n2);
 
-    ll.insert(n3);
+    ll.delete_(n2);
+    cout << "head: " << ll.head_() << endl;
+    cout << "next: " << *ll.head_().next << endl;
 
-    while (ll.head_().next_() != nullptr)
-    {
-        ll.head_() = *ll.head_().next_();
-    }
-    cout << ll.head_() << endl;
+    ll.travel();
 
     return 0;
 }
