@@ -6,6 +6,9 @@
 
 namespace adt
 {
+    // this class has couple issues: destructor and inconsistency with allocating new memory
+    // assignment operator creates pointer to reference, while constructor  allocates new memory
+    // this needs to be fixed
     T class linkedlist
     {
 
@@ -16,9 +19,6 @@ namespace adt
 
             type *value;
             node *next;
-
-        private:
-            bool is_allocated = false;
 
         public:
             // constructors
@@ -31,9 +31,9 @@ namespace adt
             ~node()
             {
 
-                delete value;
-                next = nullptr;
-                value = nullptr;
+                // delete value;
+                // next = nullptr;
+                // value = nullptr;
             }
             // accessors
 
@@ -47,6 +47,22 @@ namespace adt
             {
                 return *this->value != *other.value;
             }
+            node &operator=(const node &other)
+            {
+                if (this->value == other.value)
+                    return *this;
+
+                value = other.value;
+                return *this;
+            }
+            bool operator<=(const node &other) const
+            {
+                return *this->value <= *other.value;
+            }
+            bool operator>=(const node &other) const
+            {
+                return *this->value >= *other.value;
+            }
         };
         // LINKED ITERATOR CLASS==============================================================================================
         class linkediterator
@@ -59,8 +75,11 @@ namespace adt
             linkediterator(node *ptr);
             ~linkediterator();
             linkediterator &operator++(int);
-            linkediterator &operator+(const int value);
+            linkediterator &operator+(int value);
             bool operator!=(const linkediterator &other) const;
+            bool operator<=(const linkediterator &other) const;
+            bool operator>=(const linkediterator &other) const;
+
             node &operator*() const;
         };
 
@@ -76,26 +95,26 @@ namespace adt
         void delete_(const node &input);
         void travel() const;
         node &search(const node &value) const;
-        void sort(linkediterator &begin, linkediterator &end);
+        void sort(int begin, int end);
         void merge(linkedlist<type> &other);
-        void reverse(linkediterator &begin, linkediterator &end);
+        void reverse(node *head_);
         void concatenate(linkedlist<type> &other);
 
         // access
         node &head_() const;
-
         // operators
-        // iterator
-        const linkediterator begin() const;
-        const linkediterator end() const;
         friend std::ostream &operator<<(std::ostream &os, const linkediterator &it)
         {
             os << it;
             return os;
         }
+        // iterator
+        const linkediterator begin() const;
+        const linkediterator end() const;
 
     private:
         node *head;
+        int partition(int i, int j) const;
     };
 }
 // typedefs
@@ -126,7 +145,7 @@ T linkedlist<type>::~linkedlist()
     //     current = current->next;
     // }
 }
-
+// MODIFIERS
 T void linkedlist<type>::insert(const node &node_)
 {
     linkediterator it = this->begin();
@@ -181,7 +200,79 @@ T typename linkedlist<type>::node &linkedlist<type>::search(const node &node_) c
     }
     return current;
 }
-// operator imeplementation
+
+T int linkedlist<type>::partition(int i, int j) const
+{
+    linkediterator begin = this->begin();
+    linkediterator end = this->begin();
+    begin = begin + i;
+    end = end + j;
+
+    linkediterator pivot = end;
+
+    node temp1;
+    node temp2;
+    while (*begin <= *end)
+    {
+        if (*begin <= *pivot)
+        {
+            i++;
+            linkediterator it = this->begin();
+            begin = it + i;
+            temp1.value = nullptr;
+        }
+        else
+        {
+            temp1 = *begin;
+        }
+        if (*end >= *pivot)
+        {
+            j--;
+            linkediterator it = this->begin();
+            end = it + j;
+            temp2.value = nullptr;
+        }
+        else
+        {
+            temp2 = *end;
+        }
+        if (temp1.value != nullptr && temp2.value != nullptr)
+        {
+            *begin = temp2;
+            *end = temp1;
+        }
+    }
+
+    node temp_pivot = *pivot;
+    *pivot = *begin;
+    *begin = temp_pivot;
+
+    return i;
+}
+T void linkedlist<type>::sort(int begin, int end)
+{
+    if (begin >= end)
+        return;
+    int i = partition(begin, end);
+    sort(begin, i - 1);
+    sort(i + 1, end);
+}
+T void linkedlist<type>::reverse(node *head_)
+{
+    node *current = head_;
+    node *prev = nullptr;
+    node *next = nullptr;
+    while (current != nullptr)
+    {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    current = prev;
+    head = current;
+    // delete current;
+}
 
 // iterator implementation
 T const typename linkedlist<type>::linkediterator linkedlist<type>::begin() const
@@ -219,10 +310,11 @@ T typename linkedlist<type>::linkediterator &linkedlist<type>::linkediterator::o
     ptr = ptr->next;
     return *this;
 }
-T typename linkedlist<type>::linkediterator &linkedlist<type>::linkediterator::operator+(const int value)
+
+T typename linkedlist<type>::linkediterator &linkedlist<type>::linkediterator::operator+(int value)
 {
     int counter = 0;
-    while (counter != value)
+    while (counter < value)
     {
         ptr = ptr->next;
         counter++;
@@ -236,6 +328,14 @@ T typename linkedlist<type>::node &linkedlist<type>::linkediterator::operator*()
 T bool linkedlist<type>::linkediterator::operator!=(const linkediterator &other) const
 {
     return (this->ptr != other.ptr);
+}
+T bool linkedlist<type>::linkediterator::operator<=(const linkediterator &other) const
+{
+    return ptr <= other.ptr;
+}
+T bool linkedlist<type>::linkediterator::operator>=(const linkediterator &other) const
+{
+    return ptr >= other.ptr;
 }
 
 #endif
